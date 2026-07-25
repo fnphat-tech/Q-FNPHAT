@@ -14,7 +14,6 @@
   <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-
   <style>
     * { box-sizing: border-box; font-family: 'Mitr', sans-serif; }
     body { background-color: #f4f6f9; color: #001f3f; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
@@ -37,10 +36,13 @@
     .btn-primary:hover { background-color: #002b5e; }
     .btn-primary:active { transform: scale(0.98); }
 
+    .btn-info { width: 100%; background-color: #17a2b8; color: #fff; border: none; padding: 12px; border-radius: 10px; font-size: 15px; cursor: pointer; transition: 0.3s; margin-bottom: 15px; }
+    .btn-info:hover { background-color: #138496; }
+
     #scanner-section { display: none; width: 100%; }
     #reader { width: 100%; border: 2px solid #e0e6ed; border-radius: 12px; overflow: hidden; margin-bottom: 20px; background-color: #fafbfc; }
     
-    .action-buttons { display: flex; gap: 12px; margin-top: 20px; }
+    .action-buttons { display: flex; gap: 12px; }
     .btn-outline { flex: 1; background-color: #fff; color: #001f3f; border: 1px solid #001f3f; padding: 12px; border-radius: 10px; font-size: 14px; cursor: pointer; transition: 0.3s; }
     .btn-outline:hover { background-color: #f0f4f8; }
     
@@ -50,6 +52,11 @@
     #loading { display: none; color: #001f3f; margin-top: 15px; font-size: 14px; }
     
     .footer { margin-top: auto; padding: 20px; font-size: 12px; color: #a0aec0; letter-spacing: 0.5px; }
+
+    /* Custom Scrollbar for SweetAlert List */
+    .swal-list-container::-webkit-scrollbar { width: 6px; }
+    .swal-list-container::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 4px; }
+    .swal-list-container::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 4px; }
   </style>
 </head>
 <body>
@@ -69,7 +76,6 @@
       
       <div class="input-wrapper">
         <i class="fa-regular fa-id-badge"></i>
-        <!-- ปรับ Placeholder และเพิ่ม maxlength -->
         <input type="text" id="stdId" placeholder="Staff ID (e.g. 693080561-7)" maxlength="11" required>
       </div>
 
@@ -81,6 +87,12 @@
     <div id="scanner-section">
       <h1 style="font-size: 20px; margin-bottom: 15px;">Scan QR Code</h1>
       <div id="reader"></div>
+      
+      <!-- เพิ่มปุ่มดูรายชื่อ -->
+      <button class="btn-info" onclick="showRegisteredList()">
+        <i class="fa-solid fa-users"></i> ดูรายชื่อผู้ลงทะเบียน
+      </button>
+
       <div class="action-buttons">
         <button class="btn-outline" onclick="reloadPage()">
           <i class="fa-solid fa-rotate-right"></i> Reload
@@ -92,7 +104,7 @@
     </div>
   </div>
 
- <div class="footer">
+  <div class="footer">
     © <span id="currentYear"></span> Powered by <strong>FNPHAT</strong>. All rights reserved.
   </div>
 
@@ -106,10 +118,7 @@
 
     // --- ส่วนจัดรูปแบบรหัสนักศึกษาอัตโนมัติ ---
     document.getElementById('stdId').addEventListener('input', function (e) {
-      // ลบตัวอักษรที่ไม่ใช่ตัวเลขออก
       let value = e.target.value.replace(/[^0-9]/g, ''); 
-      
-      // ถ้าพิมพ์ถึงตัวที่ 10 ให้แทรกเครื่องหมาย - อัตโนมัติ (xxxxxxxxx-x)
       if (value.length > 9) {
         value = value.substring(0, 9) + '-' + value.substring(9, 10);
       }
@@ -130,8 +139,6 @@
         Swal.fire({ icon: 'warning', title: 'Warning', text: 'Please fill in all fields.', confirmButtonColor: '#001f3f' });
         return;
       }
-      
-      // ตรวจสอบความยาวรหัสให้ครบ 11 ตัวอักษร
       if(stdId.length !== 11) {
         Swal.fire({ icon: 'warning', title: 'Warning', text: 'Invalid Staff ID format.', confirmButtonColor: '#001f3f' });
         return;
@@ -189,14 +196,23 @@
       })
       .then(res => res.json())
       .then(data => {
+        let displayName = data.nickname ? `${data.name} (${data.nickname})` : data.name;
+
+        // อัปเดตให้รองรับสถานะการสแกนซ้ำ
         if(data.status === "success") {
-          let displayName = data.nickname ? `${data.name} (${data.nickname})` : data.name;
           Swal.fire({ 
             icon: 'success', 
             title: 'ลงทะเบียนสำเร็จ!', 
             text: displayName,
             timer: 2500,
             showConfirmButton: false
+          }).then(() => { resumeScanner(); });
+        } else if (data.status === "already_registered") {
+          Swal.fire({ 
+            icon: 'warning', 
+            title: 'ลงทะเบียนซ้ำ!', 
+            text: `${displayName} ได้ลงทะเบียนไปแล้ว`,
+            confirmButtonColor: '#f39c12'
           }).then(() => { resumeScanner(); });
         } else {
           Swal.fire({ 
@@ -210,6 +226,66 @@
       .catch(err => {
         Swal.fire({ icon: 'error', title: 'Network Error', text: 'Please check your connection.', confirmButtonColor: '#001f3f' })
             .then(() => { resumeScanner(); });
+      });
+    }
+
+    // --- ฟังก์ชันสำหรับดึงและแสดงรายชื่อ ---
+    function showRegisteredList() {
+      // พักกล้องชั่วคราว
+      if (html5QrcodeScanner) html5QrcodeScanner.pause(true);
+
+      Swal.fire({
+        title: 'กำลังโหลดข้อมูล...',
+        allowOutsideClick: false,
+        didOpen: () => { Swal.showLoading(); }
+      });
+
+      fetch(GAS_URL, {
+        method: "POST",
+        body: JSON.stringify({ action: "get_registered_list" })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.status === "success") {
+          let htmlContent = `<div class="swal-list-container" style="text-align:left; max-height: 350px; overflow-y: auto; padding-right: 10px;">`;
+          
+          if (data.total === 0) {
+            htmlContent += `<p style="text-align:center; color: #7f8c8d; margin-top:20px;">ยังไม่มีผู้ลงทะเบียน</p>`;
+          } else {
+            htmlContent += `<div style="background:#f4f6f9; padding:10px; border-radius:8px; margin-bottom: 15px; text-align:center; font-weight:600; color:#001f3f;">ยอดรวม: ${data.total} คน</div>`;
+            htmlContent += `<ul style="list-style: none; padding: 0; margin: 0;">`;
+            
+            data.data.forEach((person, index) => {
+              let displayName = person.nickname ? `${person.name} (${person.nickname})` : person.name;
+              htmlContent += `
+                <li style="padding: 10px 0; border-bottom: 1px solid #e0e6ed;">
+                  <div style="color: #001f3f; font-weight: 500; font-size: 15px;">${index + 1}. ${displayName}</div>
+                  <div style="font-size: 12px; color: #7f8c8d; margin-top:3px;"><i class="fa-regular fa-clock"></i> ${person.time}</div>
+                </li>`;
+            });
+            htmlContent += `</ul>`;
+          }
+          htmlContent += `</div>`;
+
+          Swal.fire({
+            title: 'รายชื่อผู้ลงทะเบียน',
+            html: htmlContent,
+            confirmButtonText: 'ปิดหน้าต่าง',
+            confirmButtonColor: '#001f3f',
+            width: '90%' // ให้พอดีจอมือถือ
+          }).then(() => {
+             if (html5QrcodeScanner) html5QrcodeScanner.resume();
+          });
+        } else {
+          Swal.fire('ผิดพลาด', 'ไม่สามารถดึงข้อมูลได้', 'error').then(() => {
+             if (html5QrcodeScanner) html5QrcodeScanner.resume();
+          });
+        }
+      })
+      .catch(err => {
+        Swal.fire('ผิดพลาด', 'เชื่อมต่อเซิร์ฟเวอร์ไม่ได้', 'error').then(() => {
+           if (html5QrcodeScanner) html5QrcodeScanner.resume();
+        });
       });
     }
 
@@ -232,8 +308,9 @@
       document.getElementById("email").value = "";
       document.getElementById("stdId").value = "";
     }
-// เซ็ตปีปัจจุบันอัตโนมัติใน Footer
-  document.getElementById("currentYear").innerText = new Date().getFullYear();
+
+    // เซ็ตปีปัจจุบันอัตโนมัติใน Footer
+    document.getElementById("currentYear").innerText = new Date().getFullYear();
   </script>
 
 </body>
