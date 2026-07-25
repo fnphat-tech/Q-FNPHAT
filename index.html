@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>แนะนำระบบ Q-FNPHAT</title>
+  
+  <!-- Fonts: Mitr -->
+  <link href="https://fonts.googleapis.com/css2?family=Mitr:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    * { 
+      box-sizing: border-box; 
+      font-family: 'Mitr', sans-serif; 
+    }
+    body { 
+      background-color: #f4f6f9; 
+      color: #001f3f; 
+      margin: 0; 
+      padding: 0; 
+      display: flex; 
+      flex-direction: column; 
+      align-items: center; 
+      min-height: 100vh; 
+    }
+    
+    .container { 
+      width: 90%; 
+      max-width: 500px; 
+      background: #ffffff;
+      padding: 40px 30px; 
+      text-align: center; 
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0, 31, 63, 0.08); 
+      margin-top: 5vh;
+      margin-bottom: 20px;
+    }
+
+    .logo-img { 
+      width: 90px; 
+      height: 90px; 
+      object-fit: cover; 
+      border-radius: 50%; 
+      margin-bottom: 15px; 
+      border: 3px solid #001f3f; 
+      padding: 3px; 
+    }
+
+    h1 { 
+      color: #001f3f; 
+      font-weight: 600; 
+      font-size: 28px;
+      margin-top: 0;
+      margin-bottom: 5px; 
+    }
+    
+    p.subtitle { 
+      color: #7f8c8d; 
+      font-size: 15px; 
+      margin-top: 0; 
+      margin-bottom: 30px; 
+      line-height: 1.5;
+    }
+
+    /* Features Section */
+    .features-list {
+      text-align: left;
+      margin-bottom: 35px;
+    }
+    
+    .feature-item {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 20px;
+      padding: 15px;
+      background-color: #fafbfc;
+      border-radius: 12px;
+      border: 1px solid #e0e6ed;
+      transition: transform 0.2s;
+    }
+    
+    .feature-item:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+
+    .feature-icon {
+      font-size: 24px;
+      color: #001f3f;
+      margin-right: 15px;
+      margin-top: 5px;
+      width: 30px;
+      text-align: center;
+    }
+
+    .feature-text h3 {
+      margin: 0 0 5px 0;
+      font-size: 16px;
+      color: #001f3f;
+    }
+    
+    .feature-text p {
+      margin: 0;
+      font-size: 13.5px;
+      color: #666;
+      line-height: 1.4;
+    }
+
+    /* Buttons */
+    .btn-primary { 
+      display: inline-block;
+      width: 100%; 
+      background-color: #001f3f; 
+      color: #fff; 
+      border: none; 
+      padding: 15px; 
+      border-radius: 10px; 
+      font-size: 16px; 
+      font-weight: 500; 
+      text-decoration: none;
+      cursor: pointer; 
+      transition: all 0.3s ease; 
+    }
+    
+    .btn-primary:hover { 
+      background-color: #002b5e; 
+      box-shadow: 0 4px 12px rgba(0, 31, 63, 0.2);
+    }
+    
+    .btn-primary i {
+      margin-right: 8px;
+    }
+
+    /* Footer */
+    .footer { 
+      margin-top: auto; 
+      padding: 20px; 
+      font-size: 12px; 
+      color: #a0aec0; 
+      letter-spacing: 0.5px; 
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <!-- โลโก้ -->
+    <img src="https://cdn-icons-png.flaticon.com/512/2956/2956009.png" alt="Q-FNPHAT Logo" class="logo-img">
+    
+    <!-- ส่วนหัวเรื่อง -->
+    <h1>Q-FNPHAT</h1>
+    <p class="subtitle">ระบบลงทะเบียนอัจฉริยะด้วย QR Code<br>สะดวก รวดเร็ว และแม่นยำ</p>
+
+    <!-- ส่วนแนะนำฟีเจอร์ -->
+    <div class="features-list">
+      
+      <div class="feature-item">
+        <div class="feature-icon"><i class="fa-solid fa-shield-halved"></i></div>
+        <div class="feature-text">
+          <h3>ระบบยืนยันตัวตน (Secure Login)</h3>
+          <p>เข้าสู่ระบบสำหรับสตาฟฟ์ด้วยอีเมลและรหัสนักศึกษา เพื่อป้องกันการเข้าถึงข้อมูลโดยไม่ได้รับอนุญาต</p>
+        </div>
+      </div>
+
+      <div class="feature-item">
+        <div class="feature-icon"><i class="fa-solid fa-qrcode"></i></div>
+        <div class="feature-text">
+          <h3>สแกนไวผ่านมือถือ (Fast Scan)</h3>
+          <p>เปิดกล้องสแกน QR Code จากสมาร์ทโฟนได้ทันทีโดยไม่ต้องติดตั้งแอปพลิเคชันเพิ่มเติม</p>
+        </div>
+      </div>
+
+      <div class="feature-item">
+        <div class="feature-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+        <div class="feature-text">
+          <h3>บันทึกข้อมูลอัตโนมัติ (Auto Sync)</h3>
+          <p>เมื่อสแกนสำเร็จ ระบบจะอัปเดตสถานะและบันทึกเวลาลงฐานข้อมูล Google Sheets ให้ทันที</p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ปุ่มลิงก์ไปยังหน้าเข้าสู่ระบบ -->
+    <!-- 💡 แก้ไข href="index.html" ให้ตรงกับชื่อไฟล์หน้า Login/Scanner ของคุณ -->
+    <a href="index.html" class="btn-primary">
+      <i class="fa-solid fa-right-to-bracket"></i> เข้าสู่ระบบลงทะเบียน
+    </a>
+  </div>
+
+  <!-- Footer อัปเดตปีอัตโนมัติ -->
+  <div class="footer">
+    © <span id="currentYear"></span> Powered by <strong>FNPHAT</strong>. All rights reserved.
+  </div>
+
+  <script>
+    // อัปเดตปี ค.ศ. อัตโนมัติ
+    document.getElementById("currentYear").innerText = new Date().getFullYear();
+  </script>
+
+</body>
+</html>
