@@ -57,7 +57,6 @@
     
     .footer { margin-top: auto; padding: 20px; font-size: 12px; color: #a0aec0; letter-spacing: 0.5px; }
 
-    /* Custom Scrollbar for SweetAlert List */
     .swal-list-container::-webkit-scrollbar { width: 6px; }
     .swal-list-container::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 4px; }
     .swal-list-container::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 4px; }
@@ -73,7 +72,6 @@
       <h1>Q-FNPHAT</h1>
       <p class="subtitle">Quick Scan, Smart Queue</p>
 
-      <!-- เพิ่ม form เพื่อรองรับการกด Enter บนคีย์บอร์ด -->
       <form onsubmit="event.preventDefault(); login();">
         <div class="input-wrapper">
           <i class="fa-regular fa-envelope"></i>
@@ -139,7 +137,7 @@
     let html5QrcodeScanner = null;
     let isProcessing = false;
 
-    // --- ส่วนจัดรูปแบบรหัสนักศึกษาอัตโนมัติ ---
+    // --- จัดรูปแบบรหัสนักศึกษาอัตโนมัติ ---
     document.getElementById('stdId').addEventListener('input', function (e) {
       let value = e.target.value.replace(/[^0-9]/g, ''); 
       if (value.length > 9) {
@@ -230,7 +228,87 @@
       .then(data => {
         let displayName = data.nickname ? `${data.name} (${data.nickname})` : (data.name || decodedText);
 
-        if(data.status === "success") {
+        // 🟡 1. กรณีต้องเช็คข้อมูลเสื้อ (หรือกรณีปี 1)
+        if (data.status === "need_shirt_check") {
+          var shirtQtyHTML = (data.shirtQty && data.shirtQty !== 'ไม่ได้สั่ง') 
+            ? `${data.shirtQty} ตัว` 
+            : `<span style="color: #dc3545; font-weight: bold;">ไม่ได้สั่ง</span>`;
+
+          Swal.fire({
+            title: '📋 ตรวจสอบข้อมูลก่อนบันทึก',
+            html: `
+              <div style="text-align: left; font-size: 14px; line-height: 1.6;">
+                <p style="margin: 4px 0;"><b>ชื่อ-นามสกุล:</b> ${data.name}</p>
+                <p style="margin: 4px 0;"><b>รหัส/สถานะ:</b> ${data.scanId} (${data.year || 'ผู้เข้าร่วม'})</p>
+                <p style="margin: 4px 0;"><b>จำนวนเสื้อที่สั่ง:</b> ${shirtQtyHTML}</p>
+                <hr style="margin: 10px 0; border: 0; border-top: 1px solid #ddd;">
+                <label for="swal-shirt-size"><b>ยืนยัน/แก้ไขไซส์เสื้อ:</b></label>
+                <select id="swal-shirt-size" style="width: 100%; padding: 10px; margin-top: 8px; border-radius: 8px; border: 1px solid #ccc; font-size: 15px;">
+                  <option value="ไม่ได้สั่ง" ${data.shirtSize === 'ไม่ได้สั่ง' ? 'selected' : ''}>-- ไม่ได้สั่งเสื้อ --</option>
+                  <option value="S" ${data.shirtSize === 'S' ? 'selected' : ''}>S</option>
+                  <option value="M" ${data.shirtSize === 'M' ? 'selected' : ''}>M</option>
+                  <option value="L" ${data.shirtSize === 'L' ? 'selected' : ''}>L</option>
+                  <option value="XL" ${data.shirtSize === 'XL' ? 'selected' : ''}>XL</option>
+                  <option value="2XL" ${data.shirtSize === '2XL' ? 'selected' : ''}>2XL</option>
+                  <option value="3XL" ${data.shirtSize === '3XL' ? 'selected' : ''}>3XL</option>
+                  <option value="4XL" ${data.shirtSize === '4XL' ? 'selected' : ''}>4XL</option>
+                </select>
+              </div>
+            `,
+            showCancelButton: true,
+            confirmButtonText: 'ยืนยันลงทะเบียน',
+            cancelButtonText: 'ยกเลิก',
+            confirmButtonColor: '#A73B24',
+            allowOutsideClick: false,
+            preConfirm: () => {
+              return document.getElementById('swal-shirt-size').value;
+            }
+          }).then((result) => {
+            if (result.isConfirmed) {
+              Swal.fire({
+                title: 'กำลังบันทึกข้อมูล...',
+                allowOutsideClick: false,
+                didOpen: () => { Swal.showLoading(); }
+              });
+
+              fetch(GAS_URL, {
+                method: "POST",
+                body: JSON.stringify({
+                  action: "scan",
+                  scanId: decodedText,
+                  session: currentSession,
+                  confirm: true,
+                  shirtSize: result.value
+                })
+              })
+              .then(res => res.json())
+              .then(confirmRes => {
+                if (confirmRes.status === "success") {
+                  var shirtMsg = (confirmRes.shirtSize && confirmRes.shirtSize !== 'ไม่ได้สั่ง') 
+                    ? `<br>ไซส์เสื้อ: <b>${confirmRes.shirtSize}</b>` 
+                    : '<br><span style="color:#7f8c8d;">(ไม่ได้สั่งเสื้อ)</span>';
+
+                  Swal.fire({ 
+                    icon: 'success', 
+                    title: 'ลงทะเบียนสำเร็จ!', 
+                    html: `<b>${confirmRes.name}</b>${shirtMsg}<br><span style="color:#7f8c8d; font-size:14px;">รอบ: ${currentSession}</span>`,
+                    timer: 2200,
+                    showConfirmButton: false
+                  }).then(() => { resumeScanner(); });
+                } else {
+                  Swal.fire({ icon: 'error', title: 'ผิดพลาด', text: confirmRes.message, confirmButtonColor: '#A73B24' }).then(() => { resumeScanner(); });
+                }
+              })
+              .catch(err => {
+                Swal.fire({ icon: 'error', title: 'Network Error', text: 'เชื่อมต่อเซิร์ฟเวอร์ไม่ได้', confirmButtonColor: '#A73B24' }).then(() => { resumeScanner(); });
+              });
+            } else {
+              resumeScanner();
+            }
+          });
+
+        // 🟢 2. ลงทะเบียนสำเร็จปกติ (รุ่นพี่ที่ไม่สั่งเสื้อ)
+        } else if(data.status === "success") {
           Swal.fire({ 
             icon: 'success', 
             title: 'ลงทะเบียนสำเร็จ!', 
@@ -238,6 +316,8 @@
             timer: 2200,
             showConfirmButton: false
           }).then(() => { resumeScanner(); });
+
+        // 🟠 3. ลงทะเบียนซ้ำไปแล้ว
         } else if (data.status === "already_registered") {
           Swal.fire({ 
             icon: 'warning', 
@@ -245,11 +325,13 @@
             html: `<b>${displayName}</b><br>ได้ลงทะเบียนใน <b>${currentSession}</b> ไปแล้ว`,
             confirmButtonColor: '#f39c12'
           }).then(() => { resumeScanner(); });
+
+        // 🔴 4. เกิดข้อผิดพลาดอื่น ๆ
         } else {
           Swal.fire({ 
             icon: 'error', 
             title: 'ผิดพลาด', 
-            text: data.message, 
+            text: data.message || "ไม่พบข้อมูลในระบบ", 
             confirmButtonColor: '#A73B24'
           }).then(() => { resumeScanner(); });
         }
@@ -353,7 +435,6 @@
       document.getElementById("stdId").value = "";
     }
 
-    // เซ็ตปีปัจจุบันอัตโนมัติใน Footer
     document.getElementById("currentYear").innerText = new Date().getFullYear();
   </script>
 
