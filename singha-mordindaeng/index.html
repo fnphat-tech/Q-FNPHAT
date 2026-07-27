@@ -160,7 +160,7 @@
 
   <div class="container">
     <!-- โลโก้โครงการ -->
-    <img src="LOGOPA.png" alt="โลโก้ รปศ" class="logo-img" onerror="this.style.display='none'">
+    <img src="/LOGOPA.png" alt="โลโก้ รปศ" class="logo-img" onerror="this.style.display='none'">
 
     <div class="project-badge">
       <i class="fa-solid fa-graduation-cap"></i> สิงห์มอดินแดง
@@ -183,7 +183,7 @@
 
       <div class="btn-group">
         <!-- ปุ่มไปที่หน้าลงทะเบียน -->
-        <a href="register.html" class="btn btn-main">
+        <a href="https://fnphat-tech.github.io/Q-FNPHAT/singha-mordindaeng/Register/" id="btnRegister" class="btn btn-main">
           <i class="fa-solid fa-right-to-bracket"></i> ไปที่หน้าลงทะเบียน
         </a>
         
@@ -195,7 +195,7 @@
           
           <!-- ปุ่มดู QR Code -->
           <button class="btn btn-sub" onclick="showWalkinQRCode()">
-            <i class="fa-solid fa-qrcode"></i>QR Code
+            <i class="fa-solid fa-qrcode"></i> QR Code
           </button>
         </div>
       </div>
@@ -229,9 +229,12 @@
   </div>
 
   <script>
-    // 🔗 กำหนด URL ของแต่ละระบบตรงนี้
-    const WALKIN_URL = window.location.origin + "/register.html"; // หรือใส่ URL เต็ม เช่น "https://xxx.netlify.app/register.html"
-    const CHECKIN_URL = "https://script.google.com/macros/s/AKfycbxSpKZtB5r9uogKDhAMWKPd4NFBl891jGjlt2ad53Mzl3ILHSQQ2UJL2byGWEt1l2Be6Q/exec"; // URL สำหรับระบบ CheckIn
+    // ⚙️ ตั้งค่าลิงก์ระบบทั้งหมดที่นี่
+    // 1) ลิงก์ระบบลงทะเบียน ( Register )
+    const WALKIN_URL = "https://fnphat-tech.github.io/Q-FNPHAT/singha-mordindaeng/Register/"; 
+
+    // 2) ลิงก์ระบบเช็กอิน ( CheckIn )
+    const CHECKIN_URL = "https://fnphat-tech.github.io/Q-FNPHAT/singha-mordindaeng/CheckIn/";
 
     // ฟังก์ชั่นคัดลอกลิงก์ Walk-in
     function copyWalkinLink() {
