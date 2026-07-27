@@ -4,6 +4,19 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>สิงห์มอดินแดง | ศูนย์รวมระบบโครงการฮ่วมฮัก ฮ่วมใจ ฮับขวัญน้องใหม่</title>
+
+  <!-- 1. Favicon & PWA Icons -->
+  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+  <link rel="shortcut icon" href="https://fnphat-tech.github.io/Q-FNPHAT/favicon.ico" type="image/x-icon">
+  <link rel="apple-touch-icon" href="https://fnphat-tech.github.io/Q-FNPHAT/logo.svg">
+  <meta name="theme-color" content="#A73B24">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Q-FNPHAT">
+
+  <!-- PWA Manifest Inline -->
+  <link rel="manifest" href='data:application/manifest+json,{"name":"Q-FNPHAT","short_name":"Q-FNPHAT","start_url":".","display":"standalone","background_color":"#ffffff","theme_color":"#A73B24","icons":[{"src":"/LOGOPA.png","sizes":"192x192","type":"image/png"}]}'>
   
   <!-- Fonts: Mitr -->
   <link href="https://fonts.googleapis.com/css2?family=Mitr:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -61,7 +74,29 @@
     }
 
     h1 { color: #A73B24; font-weight: 600; font-size: 20px; margin-top: 0; margin-bottom: 4px; }
-    p.subtitle { color: #555555; font-size: 13px; margin-top: 0; margin-bottom: 22px; line-height: 1.4; }
+    p.subtitle { color: #555555; font-size: 13px; margin-top: 0; margin-bottom: 18px; line-height: 1.4; }
+
+    /* PWA Install Button Style */
+    .btn-pwa {
+      background-color: #fffaf0;
+      color: #A73B24;
+      border: 1.5px dashed #A73B24;
+      padding: 10px 16px;
+      border-radius: 30px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 20px;
+      width: 100%;
+      transition: all 0.2s;
+    }
+    .btn-pwa:hover {
+      background-color: #fdf5f4;
+    }
 
     /* Service Card Design */
     .service-card {
@@ -169,7 +204,12 @@
     <h1>ฝ่ายทะเบียน</h1>
     <p class="subtitle"><b>โครงการฮ่วมฮัก ฮ่วมใจ ฮับขวัญน้องใหม่ สิงห์มอดินแดง</b></p>
 
-    <!-- 1. บริการลงทะเบียน Walk-in -->
+    <!-- 2. ปุ่มติดตั้ง PWA -->
+    <button id="btnPWA" class="btn-pwa" onclick="installPWA()">
+      <i class="fa-solid fa-mobile-screen-button"></i> ติดตั้งแอปบนมือถือ (PWA)
+    </button>
+
+    <!-- บริการที่ 1: ลงทะเบียน Walk-in -->
     <div class="service-card">
       <div class="service-header">
         <div class="service-icon">
@@ -201,7 +241,7 @@
       </div>
     </div>
 
-    <!-- 2. บริการ CheckIn Q-FNPHAT -->
+    <!-- บริการที่ 2: CheckIn Q-FNPHAT -->
     <div class="service-card">
       <div class="service-header">
         <div class="service-icon">
@@ -230,11 +270,57 @@
 
   <script>
     // ⚙️ ตั้งค่าลิงก์ระบบทั้งหมดที่นี่
-    // 1) ลิงก์ระบบลงทะเบียน ( Register )
     const WALKIN_URL = "https://fnphat-tech.github.io/Q-FNPHAT/singha-mordindaeng/Register/"; 
-
-    // 2) ลิงก์ระบบเช็กอิน ( CheckIn )
     const CHECKIN_URL = "https://fnphat-tech.github.io/Q-FNPHAT/singha-mordindaeng/CheckIn/";
+
+    // 📱 การจัดการระบบ PWA
+    let deferredPrompt;
+    const btnPWA = document.getElementById('btnPWA');
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      btnPWA.style.display = 'inline-flex';
+    });
+
+    function installPWA() {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then((choiceResult) => {
+          if (choiceResult.outcome === 'accepted') {
+            btnPWA.style.display = 'none';
+          }
+          deferredPrompt = null;
+        });
+      } else {
+        // หากเบราว์เซอร์ไม่ส่ง event (เช่น iOS หรือติดตั้งไว้แล้ว) แสดงวิธีทำ
+        Swal.fire({
+          title: 'วิธีติดตั้งแอปบนมือถือ',
+          icon: 'info',
+          html: `
+            <div style="text-align: left; font-size: 13px; line-height: 1.6; color: #2d3748; background: #fdf5f4; padding: 12px; border-radius: 8px;">
+              <p style="margin: 0 0 8px 0; font-weight: 600; color: #A73B24;">📱 สำหรับ iOS (Safari):</p>
+              <ol style="margin: 0 0 12px 0; padding-left: 20px;">
+                <li>กดปุ่ม <b>แชร์ (Share)</b> <i class="fa-solid fa-share-from-square"></i> ด้านล่าง</li>
+                <li>เลือก <b>"เพิ่มไปยังหน้าจอโฮม" (Add to Home Screen)</b></li>
+              </ol>
+              <p style="margin: 0 0 8px 0; font-weight: 600; color: #A73B24;">🤖 สำหรับ Android (Chrome):</p>
+              <ol style="margin: 0; padding-left: 20px;">
+                <li>กดปุ่ม <b>เมนู 3 จุด</b> <i class="fa-solid fa-ellipsis-vertical"></i> มุมขวาบน</li>
+                <li>เลือก <b>"ติดตั้งแอป" (Install App)</b> หรือ <b>"เพิ่มลงในหน้าจอหลัก"</b></li>
+              </ol>
+            </div>
+          `,
+          confirmButtonText: 'เข้าใจแล้ว',
+          confirmButtonColor: '#A73B24'
+        });
+      }
+    }
+
+    // ซ่อนปุ่ม PWA ถ้าเปิดใช้ในโหมด App อยู่แล้ว
+    if (window.matchMedia('(display-mode: standalone)').matches) {
+      btnPWA.style.display = 'none';
+    }
 
     // ฟังก์ชั่นคัดลอกลิงก์ Walk-in
     function copyWalkinLink() {
@@ -287,7 +373,7 @@
             </p>
             <ul style="margin: 0; padding-left: 20px;">
               <li>เข้าสู่ระบบด้วย <b>อีเมล @kkumail.com</b> พร้อมรหัสนักศึกษา</li>
-              <li><span style="color: #d9534f; font-weight: 500;">(หากจะดูรายชื่อ ให้เปิดกล้องก่อนทุกครั้ง)</span></li>
+              <li><span style="color: #d9534f; font-weight: 500;">หากจะดูรายชื่อ ให้เปิดกล้องก่อนทุกครั้ง</span></li>
             </ul>
           </div>
         `,
