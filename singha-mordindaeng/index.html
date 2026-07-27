@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>สิงห์มอดินแดง | ศูนย์รวมระบบโครงการฮ่วมฮัก ฮ่วมใจ ฮับขวัญน้องใหม่</title>
+  
+  <!-- Fonts: Mitr -->
+  <link href="https://fonts.googleapis.com/css2?family=Mitr:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <!-- SweetAlert2 -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <!-- QRCode.js Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    * { box-sizing: border-box; font-family: 'Mitr', sans-serif; }
+    body { 
+      background-color: #f4f6f9; 
+      color: #333333; 
+      margin: 0; 
+      padding: 0; 
+      display: flex; 
+      flex-direction: column; 
+      align-items: center; 
+      min-height: 100vh; 
+    }
+    
+    .container { 
+      width: 90%; 
+      max-width: 460px; 
+      background: #ffffff; 
+      padding: 28px 20px; 
+      text-align: center; 
+      border-radius: 12px; 
+      border-top: 6px solid #A73B24; 
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06); 
+      margin-top: 3vh; 
+      margin-bottom: 25px; 
+    }
+
+    .logo-img {
+      width: 90px;
+      height: 90px;
+      object-fit: contain;
+      display: block;
+      margin: 0 auto 12px auto;
+    }
+
+    .project-badge {
+      display: inline-block;
+      background-color: #fdf5f4;
+      color: #A73B24;
+      font-size: 12px;
+      font-weight: 500;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-bottom: 10px;
+      border: 1px solid #f8d7da;
+    }
+
+    h1 { color: #A73B24; font-weight: 600; font-size: 20px; margin-top: 0; margin-bottom: 4px; }
+    p.subtitle { color: #555555; font-size: 13px; margin-top: 0; margin-bottom: 22px; line-height: 1.4; }
+
+    /* Service Card Design */
+    .service-card {
+      background: #ffffff;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 18px 16px;
+      margin-bottom: 18px;
+      text-align: left;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+      transition: all 0.2s ease-in-out;
+    }
+    .service-card:hover {
+      border-color: #A73B24;
+      box-shadow: 0 4px 12px rgba(167, 59, 36, 0.08);
+    }
+
+    .service-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .service-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      background: #fdf5f4;
+      color: #A73B24;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+    .service-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: #2d3748;
+      line-height: 1.2;
+    }
+    .service-desc {
+      font-size: 11.5px;
+      color: #718096;
+      margin-top: 2px;
+    }
+
+    /* Buttons inside Card */
+    .btn-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .btn-row {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn {
+      border: none;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.2s;
+      text-decoration: none;
+      width: 100%;
+    }
+    .btn-main {
+      background-color: #A73B24;
+      color: #ffffff;
+    }
+    .btn-main:hover {
+      background-color: #8c2e1b;
+    }
+    .btn-sub {
+      background-color: #f7fafc;
+      color: #4a5568;
+      border: 1px solid #cbd5e0;
+      flex: 1;
+    }
+    .btn-sub:hover {
+      background-color: #edf2f7;
+      color: #2d3748;
+    }
+
+    .footer { margin-top: auto; padding: 20px 15px; font-size: 12px; color: #888888; text-align: center; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <!-- โลโก้โครงการ -->
+    <img src="LOGOPA.png" alt="โลโก้ รปศ" class="logo-img" onerror="this.style.display='none'">
+
+    <div class="project-badge">
+      <i class="fa-solid fa-graduation-cap"></i> สิงห์มอดินแดง
+    </div>
+    
+    <h1>ฝ่ายทะเบียน</h1>
+    <p class="subtitle"><b>โครงการฮ่วมฮัก ฮ่วมใจ ฮับขวัญน้องใหม่ สิงห์มอดินแดง</b></p>
+
+    <!-- 1. บริการลงทะเบียน Walk-in -->
+    <div class="service-card">
+      <div class="service-header">
+        <div class="service-icon">
+          <i class="fa-solid fa-user-plus"></i>
+        </div>
+        <div>
+          <div class="service-title">ลงทะเบียน Walk-in</div>
+          <div class="service-desc">สำหรับผู้ที่ไม่ได้ลงทะเบียนล่วงหน้า</div>
+        </div>
+      </div>
+
+      <div class="btn-group">
+        <!-- ปุ่มไปที่หน้าลงทะเบียน -->
+        <a href="register.html" class="btn btn-main">
+          <i class="fa-solid fa-right-to-bracket"></i> ไปที่หน้าลงทะเบียน
+        </a>
+        
+        <div class="btn-row">
+          <!-- ปุ่มคัดลอกลิงก์ -->
+          <button class="btn btn-sub" onclick="copyWalkinLink()">
+            <i class="fa-regular fa-copy"></i> คัดลอกลิงก์
+          </button>
+          
+          <!-- ปุ่มดู QR Code -->
+          <button class="btn btn-sub" onclick="showWalkinQRCode()">
+            <i class="fa-solid fa-qrcode"></i>QR Code
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. บริการ CheckIn Q-FNPHAT -->
+    <div class="service-card">
+      <div class="service-header">
+        <div class="service-icon">
+          <i class="fa-solid fa-qrcode"></i>
+        </div>
+        <div>
+          <div class="service-title">CheckIn Q-FNPHAT</div>
+          <div class="service-desc">ระบบเช็กอินเข้างานและตรวจสอบรายชื่อ</div>
+        </div>
+      </div>
+
+      <div class="btn-group">
+        <!-- ปุ่มไปที่หน้าเช็กอิน (กดแล้วขึ้น Pop-up แจ้งเตือน) -->
+        <button class="btn btn-main" onclick="openCheckinNotice()">
+          <i class="fa-solid fa-camera"></i> เข้าสู่ระบบเช็กอิน
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer">
+    © <span id="currentYear"></span> <b>โครงการฮ่วมฮัก ฮ่วมใจ ฮับขวัญน้องใหม่ สิงห์มอดินแดง</b><br>
+    <span style="color: #a0aec0; font-size: 11px;">Powered by Q-FNPHAT</span>
+  </div>
+
+  <script>
+    // 🔗 กำหนด URL ของแต่ละระบบตรงนี้
+    const WALKIN_URL = window.location.origin + "/register.html"; // หรือใส่ URL เต็ม เช่น "https://xxx.netlify.app/register.html"
+    const CHECKIN_URL = "https://script.google.com/macros/s/AKfycbxSpKZtB5r9uogKDhAMWKPd4NFBl891jGjlt2ad53Mzl3ILHSQQ2UJL2byGWEt1l2Be6Q/exec"; // URL สำหรับระบบ CheckIn
+
+    // ฟังก์ชั่นคัดลอกลิงก์ Walk-in
+    function copyWalkinLink() {
+      navigator.clipboard.writeText(WALKIN_URL).then(() => {
+        Swal.fire({
+          toast: true,
+          position: 'top',
+          icon: 'success',
+          title: 'คัดลอกลิงก์ลงทะเบียนแล้ว!',
+          showConfirmButton: false,
+          timer: 2000
+        });
+      }).catch(err => {
+        Swal.fire({ icon: 'error', title: 'ไม่สามารถคัดลอกลิงก์ได้', confirmButtonColor: '#A73B24' });
+      });
+    }
+
+    // ฟังก์ชั่นแสดง Pop-up QR Code Walk-in
+    function showWalkinQRCode() {
+      Swal.fire({
+        title: 'QR Code ลงทะเบียน Walk-in',
+        html: `
+          <div id="swal-qrcode" style="display: flex; justify-content: center; margin: 15px 0;"></div>
+          <p style="font-size: 12px; color: #666;">ให้ผู้เข้าร่วมสแกนเพื่อเข้าหน้าลงทะเบียน</p>
+        `,
+        confirmButtonText: 'ปิดหน้าต่าง',
+        confirmButtonColor: '#A73B24',
+        didOpen: () => {
+          new QRCode(document.getElementById("swal-qrcode"), {
+            text: WALKIN_URL,
+            width: 180,
+            height: 180,
+            colorDark : "#A73B24",
+            colorLight : "#ffffff",
+            correctLevel : QRCode.CorrectLevel.H
+          });
+        }
+      });
+    }
+
+    // ฟังก์ชั่นแสดง Pop-up คำแนะนำการเข้าสู่ระบบ CheckIn ก่อนเปลี่ยนหน้า
+    function openCheckinNotice() {
+      Swal.fire({
+        title: 'คำแนะนำการเข้าสู่ระบบ',
+        icon: 'info',
+        html: `
+          <div style="text-align: left; background: #fdf5f4; padding: 14px; border-radius: 8px; border: 1px solid #f8d7da; font-size: 13.5px; line-height: 1.6; color: #2d3748;">
+            <p style="margin: 0 0 8px 0; color: #A73B24; font-weight: 600;">
+              <i class="fa-solid fa-circle-exclamation"></i> กรุณาอ่านก่อนเข้าสู่ระบบ:
+            </p>
+            <ul style="margin: 0; padding-left: 20px;">
+              <li>เข้าสู่ระบบด้วย <b>อีเมล @kkumail.com</b> พร้อมรหัสนักศึกษา</li>
+              <li><span style="color: #d9534f; font-weight: 500;">(หากจะดูรายชื่อ ให้เปิดกล้องก่อนทุกครั้ง)</span></li>
+            </ul>
+          </div>
+        `,
+        showCancelButton: true,
+        confirmButtonText: 'รับทราบ และไปยังหน้าเช็กอิน',
+        cancelButtonText: 'ยกเลิก',
+        confirmButtonColor: '#A73B24',
+        cancelButtonColor: '#718096',
+        reverseButtons: true
+      }).then((result) => {
+        if (result.isConfirmed) {
+          window.location.href = CHECKIN_URL;
+        }
+      });
+    }
+
+    document.getElementById("currentYear").innerText = new Date().getFullYear();
+  </script>
+</body>
+</html>
