@@ -230,9 +230,18 @@
 
         // 🟡 1. กรณีต้องเช็คข้อมูลเสื้อ (หรือกรณีปี 1)
         if (data.status === "need_shirt_check") {
-          var shirtQtyHTML = (data.shirtQty && data.shirtQty !== 'ไม่ได้สั่ง') 
+          var shirtQtyHTML = (data.shirtQty && data.shirtQty !== 'ไม่ได้สั่ง' && data.shirtQty !== '0') 
             ? `${data.shirtQty} ตัว` 
             : `<span style="color: #dc3545; font-weight: bold;">ไม่ได้สั่ง</span>`;
+
+          // ตรวจสอบไซส์เสื้อ: หากข้อมูลจาก Sheet ไม่อยู่ในตัวเลือกมาตรฐาน (เช่น "L, XL") ให้สร้าง option พิเศษขึ้นมาให้อัตโนมัติ
+          const standardSizes = ["S", "M", "L", "XL", "2XL", "3XL", "4XL", "ไม่ได้สั่ง"];
+          let customOptionHTML = "";
+          const rawSize = data.shirtSize ? data.shirtSize.toString().trim() : "";
+          
+          if (rawSize && rawSize !== "-" && rawSize !== "ไม่ได้สั่ง" && !standardSizes.includes(rawSize)) {
+            customOptionHTML = `<option value="${rawSize}" selected>${rawSize} (ไซส์ตามฐานข้อมูล)</option>`;
+          }
 
           Swal.fire({
             title: '📋 ตรวจสอบข้อมูลก่อนบันทึก',
@@ -244,14 +253,15 @@
                 <hr style="margin: 10px 0; border: 0; border-top: 1px solid #ddd;">
                 <label for="swal-shirt-size"><b>ยืนยัน/แก้ไขไซส์เสื้อ:</b></label>
                 <select id="swal-shirt-size" style="width: 100%; padding: 10px; margin-top: 8px; border-radius: 8px; border: 1px solid #ccc; font-size: 15px;">
-                  <option value="ไม่ได้สั่ง" ${data.shirtSize === 'ไม่ได้สั่ง' ? 'selected' : ''}>-- ไม่ได้สั่งเสื้อ --</option>
-                  <option value="S" ${data.shirtSize === 'S' ? 'selected' : ''}>S</option>
-                  <option value="M" ${data.shirtSize === 'M' ? 'selected' : ''}>M</option>
-                  <option value="L" ${data.shirtSize === 'L' ? 'selected' : ''}>L</option>
-                  <option value="XL" ${data.shirtSize === 'XL' ? 'selected' : ''}>XL</option>
-                  <option value="2XL" ${data.shirtSize === '2XL' ? 'selected' : ''}>2XL</option>
-                  <option value="3XL" ${data.shirtSize === '3XL' ? 'selected' : ''}>3XL</option>
-                  <option value="4XL" ${data.shirtSize === '4XL' ? 'selected' : ''}>4XL</option>
+                  ${customOptionHTML}
+                  <option value="ไม่ได้สั่ง" ${rawSize === 'ไม่ได้สั่ง' || rawSize === '' || rawSize === '-' ? 'selected' : ''}>-- ไม่ได้สั่งเสื้อ --</option>
+                  <option value="S" ${rawSize === 'S' ? 'selected' : ''}>S</option>
+                  <option value="M" ${rawSize === 'M' ? 'selected' : ''}>M</option>
+                  <option value="L" ${rawSize === 'L' ? 'selected' : ''}>L</option>
+                  <option value="XL" ${rawSize === 'XL' ? 'selected' : ''}>XL</option>
+                  <option value="2XL" ${rawSize === '2XL' ? 'selected' : ''}>2XL</option>
+                  <option value="3XL" ${rawSize === '3XL' ? 'selected' : ''}>3XL</option>
+                  <option value="4XL" ${rawSize === '4XL' ? 'selected' : ''}>4XL</option>
                 </select>
               </div>
             `,
