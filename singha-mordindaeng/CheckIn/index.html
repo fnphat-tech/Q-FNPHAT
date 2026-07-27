@@ -240,7 +240,7 @@
           const rawSize = data.shirtSize ? data.shirtSize.toString().trim() : "";
           
           if (rawSize && rawSize !== "-" && rawSize !== "ไม่ได้สั่ง" && !standardSizes.includes(rawSize)) {
-            customOptionHTML = `<option value="${rawSize}" selected>${rawSize} (ไซส์ตามฐานข้อมูล)</option>`;
+            customOptionHTML = `<option value="${rawSize}" selected>${rawSize} (ไซซ์ตามฐานข้อมูล)</option>`;
           }
 
           Swal.fire({
@@ -251,7 +251,7 @@
                 <p style="margin: 4px 0;"><b>รหัส/สถานะ:</b> ${data.scanId} (${data.year || 'ผู้เข้าร่วม'})</p>
                 <p style="margin: 4px 0;"><b>จำนวนเสื้อที่สั่ง:</b> ${shirtQtyHTML}</p>
                 <hr style="margin: 10px 0; border: 0; border-top: 1px solid #ddd;">
-                <label for="swal-shirt-size"><b>ยืนยัน/แก้ไขไซส์เสื้อ:</b></label>
+                <label for="swal-shirt-size"><b>ยืนยัน/แก้ไขไซซ์เสื้อ:</b></label>
                 <select id="swal-shirt-size" style="width: 100%; padding: 10px; margin-top: 8px; border-radius: 8px; border: 1px solid #ccc; font-size: 15px;">
                   ${customOptionHTML}
                   <option value="ไม่ได้สั่ง" ${rawSize === 'ไม่ได้สั่ง' || rawSize === '' || rawSize === '-' ? 'selected' : ''}>-- ไม่ได้สั่งเสื้อ --</option>
@@ -295,7 +295,7 @@
               .then(confirmRes => {
                 if (confirmRes.status === "success") {
                   var shirtMsg = (confirmRes.shirtSize && confirmRes.shirtSize !== 'ไม่ได้สั่ง') 
-                    ? `<br>ไซส์เสื้อ: <b>${confirmRes.shirtSize}</b>` 
+                    ? `<br>ไซซ์เสื้อ: <b>${confirmRes.shirtSize}</b>` 
                     : '<br><span style="color:#7f8c8d;">(ไม่ได้สั่งเสื้อ)</span>';
 
                   Swal.fire({ 
