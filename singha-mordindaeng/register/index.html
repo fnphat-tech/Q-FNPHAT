@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>ลงทะเบียน Walk-in | โครงการฮ่วมฮัก ฮ่วมใจ ฮับขวัญน้องใหม่ สิงห์มอดินแดง</title>
+  
+  <!-- Fonts: Mitr -->
+  <link href="https://fonts.googleapis.com/css2?family=Mitr:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <!-- SweetAlert2 -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <!-- QRCode.js Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    * { box-sizing: border-box; font-family: 'Mitr', sans-serif; }
+    body { 
+      background-color: #f4f6f9; 
+      color: #333333; 
+      margin: 0; 
+      padding: 0; 
+      display: flex; 
+      flex-direction: column; 
+      align-items: center; 
+      min-height: 100vh; 
+    }
+    
+    .container { 
+      width: 90%; 
+      max-width: 460px; 
+      background: #ffffff; 
+      padding: 28px 20px; 
+      text-align: center; 
+      border-radius: 12px; 
+      border-top: 6px solid #A73B24; 
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06); 
+      margin-top: 3vh; 
+      margin-bottom: 25px; 
+    }
+
+    /* 1. โลโก้ รปศ อยู่ตรงกลาง */
+    .logo-img {
+      width: 90px;
+      height: 90px;
+      object-fit: contain;
+      display: block;
+      margin: 0 auto 12px auto;
+    }
+
+    .project-badge {
+      display: inline-block;
+      background-color: #fdf5f4;
+      color: #A73B24;
+      font-size: 12px;
+      font-weight: 500;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-bottom: 10px;
+      border: 1px solid #f8d7da;
+    }
+
+    h1 { color: #A73B24; font-weight: 600; font-size: 22px; margin-top: 0; margin-bottom: 4px; }
+    p.subtitle { color: #555555; font-size: 13px; margin-top: 0; margin-bottom: 20px; line-height: 1.4; }
+
+    /* 2. ดีไซน์เมนูเลือกสถานะ (4 ตัวเลือก) */
+    .role-grid { 
+      display: flex; 
+      flex-direction: column;
+      gap: 12px; 
+      margin-bottom: 15px; 
+    }
+    .role-card { 
+      background: #ffffff; 
+      border: 1.5px solid #e2e8f0; 
+      border-radius: 12px; 
+      padding: 12px 16px; 
+      cursor: pointer; 
+      transition: all 0.2s ease-in-out; 
+      display: flex; 
+      align-items: center; 
+      gap: 14px;
+      text-align: left;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+    }
+    .role-card:hover, .role-card:active {
+      border-color: #A73B24;
+      background: #fdf5f4;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(167, 59, 36, 0.12);
+    }
+    .role-icon-box {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      background: #fdf5f4;
+      color: #A73B24;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+    .role-info {
+      flex-grow: 1;
+    }
+    .role-title {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: #2d3748;
+      margin-bottom: 2px;
+      line-height: 1.3;
+    }
+    .role-desc {
+      font-size: 11.5px;
+      color: #718096;
+      line-height: 1.3;
+    }
+    .role-arrow {
+      color: #cbd5e0;
+      font-size: 14px;
+    }
+    .role-card:hover .role-arrow {
+      color: #A73B24;
+    }
+
+    .input-wrapper { position: relative; margin-bottom: 15px; text-align: left; }
+    .input-wrapper label { font-size: 12.5px; font-weight: 500; color: #495057; margin-bottom: 5px; display: block; }
+    .input-wrapper i { position: absolute; left: 14px; bottom: 13px; color: #a0aec0; }
+    
+    input, select { 
+      width: 100%; 
+      padding: 11px 14px 11px 40px; 
+      border: 1px solid #e2e8f0; 
+      background-color: #fafbfc; 
+      border-radius: 8px; 
+      font-size: 14px; 
+      color: #333333;
+      transition: all 0.3s; 
+    }
+    input:focus, select:focus { 
+      border-color: #A73B24; 
+      background-color: #ffffff; 
+      outline: none; 
+      box-shadow: 0 0 0 3px rgba(167, 59, 36, 0.12); 
+    }
+
+    .btn-primary { 
+      width: 100%; 
+      background-color: #A73B24; 
+      color: #ffffff; 
+      border: none; 
+      padding: 12px; 
+      border-radius: 8px; 
+      font-size: 14.5px; 
+      font-weight: 500; 
+      cursor: pointer; 
+      transition: 0.3s; 
+      margin-top: 10px; 
+    }
+    .btn-primary:hover { background-color: #8c2e1b; }
+
+    .btn-secondary { 
+      width: 100%; 
+      background-color: #4a5568; 
+      color: #ffffff; 
+      border: none; 
+      padding: 12px; 
+      border-radius: 8px; 
+      font-size: 14.5px; 
+      font-weight: 500; 
+      cursor: pointer; 
+      transition: 0.3s; 
+      margin-top: 5px; 
+    }
+    .btn-secondary:hover { background-color: #364152; }
+
+    .btn-back {
+      background: none;
+      border: none;
+      color: #888;
+      font-size: 12.5px;
+      cursor: pointer;
+      margin-bottom: 15px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 0;
+    }
+    .btn-back:hover { color: #A73B24; }
+
+    .btn-outline {
+      width: 100%;
+      background-color: transparent;
+      color: #666;
+      border: 1px solid #ccc;
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 13px;
+      cursor: pointer;
+      margin-top: 15px;
+      transition: 0.3s;
+    }
+    .btn-outline:hover { background-color: #f5f5f5; color: #333; }
+
+    /* ส่วนแสดงผลสำเร็จ + QR Code */
+    #result-section { 
+      display: none; 
+      margin-top: 10px; 
+      padding: 20px; 
+      background-color: #fdf5f4; 
+      border-radius: 10px; 
+      border-left: 4px solid #A73B24;
+      text-align: center;
+    }
+    .result-info { 
+      font-size: 13.5px; 
+      color: #495057; 
+      text-align: left; 
+      background: #ffffff; 
+      padding: 14px; 
+      border-radius: 8px; 
+      border: 1px solid #f2dede;
+      margin-bottom: 15px; 
+      line-height: 1.6;
+    }
+    #qrcode { 
+      display: flex; 
+      justify-content: center; 
+      align-items: center;
+      margin: 15px 0; 
+      padding: 12px;
+      background: #ffffff;
+      border-radius: 10px;
+      border: 1px solid #f2dede;
+    }
+
+    .footer { margin-top: auto; padding: 20px 15px; font-size: 12px; color: #888888; text-align: center; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <!-- 1. โลโก้ รปศ (จัดกึ่งกลางแล้ว) -->
+    <img src="LOGOPA.png" alt="โลโก้ รปศ" class="logo-img" onerror="this.style.display='none'">
+
+    <div class="project-badge">
+      <i class="fa-solid fa-graduation-cap"></i> สิงห์มอดินแดง
+    </div>
+    
+    <h1>ลงทะเบียน Walk-in</h1>
+    <p class="subtitle"><b>โครงการฮ่วมฮัก ฮ่วมใจ ฮับขวัญน้องใหม่ สิงห์มอดินแดง</b></p>
+
+    <!-- 2. เมนูเลือกสถานะ (แบ่งอาจารย์ / ศิษย์เก่า แยกกัน) -->
+    <div id="roleSelectionWrapper">
+      <p style="font-size: 13px; color: #A73B24; font-weight: 500; margin-bottom: 14px; text-align: left;">
+        <i class="fa-solid fa-user-check"></i> กรุณาเลือกสถานะของคุณ:
+      </p>
+      
+      <div class="role-grid" id="roleSwitcher">
+        <!-- ตัวเลือกที่ 1 -->
+        <div class="role-card" onclick="selectRole('status_1')">
+          <div class="role-icon-box">
+            <i class="fa-solid fa-user-graduate"></i>
+          </div>
+          <div class="role-info">
+            <div class="role-title">นักศึกษา ป.ตรี (สาขา รปศ.)</div>
+            <div class="role-desc">สาขาวิชารัฐประศาสนศาสตร์</div>
+          </div>
+          <i class="fa-solid fa-chevron-right role-arrow"></i>
+        </div>
+
+        <!-- ตัวเลือกที่ 2 -->
+        <div class="role-card" onclick="selectRole('status_2')">
+          <div class="role-icon-box">
+            <i class="fa-solid fa-graduation-cap"></i>
+          </div>
+          <div class="role-info">
+            <div class="role-title">นักศึกษา ป.โท-เอก / สาขาอื่น</div>
+            <div class="role-desc">รปศ. (ป.โท/เอก) หรือ ป.ตรี สาขาอื่นๆ</div>
+          </div>
+          <i class="fa-solid fa-chevron-right role-arrow"></i>
+        </div>
+
+        <!-- ตัวเลือกที่ 3: ศิษย์เก่า -->
+        <div class="role-card" onclick="selectRole('status_3')">
+          <div class="role-icon-box">
+            <i class="fa-solid fa-award"></i>
+          </div>
+          <div class="role-info">
+            <div class="role-title">ศิษย์เก่า KKU</div>
+            <div class="role-desc">ศิษย์เก่านักศึกษามหาวิทยาลัยขอนแก่น</div>
+          </div>
+          <i class="fa-solid fa-chevron-right role-arrow"></i>
+        </div>
+
+        <!-- ตัวเลือกที่ 4: อาจารย์ / บุคลากร -->
+        <div class="role-card" onclick="selectRole('status_4')">
+          <div class="role-icon-box">
+            <i class="fa-solid fa-chalkboard-user"></i>
+          </div>
+          <div class="role-info">
+            <div class="role-title">อาจารย์ / บุคลากร KKU</div>
+            <div class="role-desc">คณาจารย์ หรือ บุคลากรมหาวิทยาลัยขอนแก่น</div>
+          </div>
+          <i class="fa-solid fa-chevron-right role-arrow"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. ฟอร์มกรอกข้อมูล (ซ่อนไว้ก่อนเลือกสถานะ) -->
+    <div id="formContainer" style="display: none;">
+      
+      <div style="text-align: left;">
+        <button class="btn-back" onclick="backToRoleSelection()">
+          <i class="fa-solid fa-arrow-left"></i> เปลี่ยนสถานะ / ย้อนกลับ
+        </button>
+      </div>
+
+      <!-- ฟอร์ม สถานะที่ 1: นักศึกษา ป.ตรี รปศ. -->
+      <div id="paStudentForm" style="display: none;">
+        <p style="font-size: 12.5px; color: #A73B24; text-align: left; margin-top: 0; margin-bottom: 12px; font-weight: 500;">
+          <i class="fa-solid fa-circle-info"></i> นักศึกษาระดับปริญญาตรี สาขาวิชารัฐประศาสนศาสตร์
+        </p>
+
+        <div class="input-wrapper">
+          <label>รหัสนักศึกษา <span style="color:red;">*</span></label>
+          <i class="fa-regular fa-id-badge"></i>
+          <input type="text" id="stdId" placeholder="เช่น 695555555-5" maxlength="11">
+        </div>
+
+        <button class="btn-secondary" id="btnCheckStd" onclick="checkStudent()">
+          <i class="fa-solid fa-magnifying-glass"></i> ตรวจสอบข้อมูลในระบบ
+        </button>
+
+        <!-- ฟอร์มเสริม กรณีไม่พบข้อมูลในระบบ -->
+        <div id="extraStudentFields" style="display: none; margin-top: 18px; text-align: left; border-top: 1px dashed #e2e8f0; padding-top: 15px;">
+          <p style="color: #d9534f; font-size: 12px; font-weight: 500; margin-top: 0; margin-bottom: 10px;">
+            * ไม่พบข้อมูลในระบบ กรุณากรอกข้อมูลเพื่อลงทะเบียนใหม่
+          </p>
+          
+          <div class="input-wrapper">
+            <label>ชื่อ-นามสกุล <span style="color:red;">*</span></label>
+            <i class="fa-regular fa-user"></i>
+            <input type="text" id="stdName" placeholder="นาย / นางสาว...">
+          </div>
+
+          <div class="input-wrapper">
+            <label>อีเมล (KKU Email) <span style="color:red;">*</span></label>
+            <i class="fa-regular fa-envelope"></i>
+            <input type="email" id="stdEmail" placeholder="xxx@kkumail.com">
+          </div>
+
+          <div class="input-wrapper">
+            <label>ระดับชั้นปี <span style="color:red;">*</span></label>
+            <i class="fa-solid fa-layer-group"></i>
+            <select id="stdYear">
+              <option value="นักศึกษาชั้นปีที่ 1">นักศึกษาชั้นปีที่ 1</option>
+              <option value="นักศึกษาชั้นปีที่ 2">นักศึกษาชั้นปีที่ 2</option>
+              <option value="นักศึกษาชั้นปีที่ 3">นักศึกษาชั้นปีที่ 3</option>
+              <option value="นักศึกษาชั้นปีที่ 4">นักศึกษาชั้นปีที่ 4</option>
+            </select>
+          </div>
+
+          <button class="btn-primary" onclick="registerNewPaStudent()">
+            <i class="fa-solid fa-user-plus"></i> ยืนยันลงทะเบียน
+          </button>
+        </div>
+      </div>
+
+      <!-- ฟอร์ม สถานะที่ 2, 3, 4: สาขาอื่น / ป.โท-เอก / ศิษย์เก่า / อาจารย์-บุคลากร -->
+      <div id="generalWalkinForm" style="display: none; text-align: left;">
+        
+        <p id="formTitleHeader" style="font-size: 12.5px; color: #A73B24; margin-top: 0; margin-bottom: 12px; font-weight: 500;"></p>
+
+        <div class="input-wrapper" id="divGenStdId">
+          <label id="lblGenStdId">รหัสนักศึกษา <span style="color:red;">*</span></label>
+          <i class="fa-regular fa-id-badge"></i>
+          <input type="text" id="genStdId" placeholder="เช่น 695555555-5" maxlength="11">
+        </div>
+
+        <div class="input-wrapper">
+          <label>ชื่อ-นามสกุล <span style="color:red;">*</span></label>
+          <i class="fa-regular fa-user"></i>
+          <input type="text" id="genName" placeholder="ระบุชื่อ-นามสกุล">
+        </div>
+
+        <div class="input-wrapper">
+          <label>อีเมลสำหรับรับผลลงทะเบียน <span style="color:red;">*</span></label>
+          <i class="fa-regular fa-envelope"></i>
+          <input type="email" id="genEmail" placeholder="xxx@kkumail.com">
+        </div>
+
+        <button class="btn-primary" onclick="registerGeneralWalkin()">
+          <i class="fa-solid fa-check"></i> บันทึกข้อมูลลงทะเบียน
+        </button>
+      </div>
+
+    </div>
+
+    <!-- 4. ส่วนแสดงผลเมื่อลงทะเบียนสำเร็จ + แสดง QR CODE -->
+    <div id="result-section">
+      <h3 style="color:#A73B24; margin-top: 0; font-size: 17px; font-weight: 600;">
+        <i class="fa-solid fa-circle-check" style="color: #2e7d32;"></i> ลงทะเบียนสำเร็จ
+      </h3>
+      
+      <div class="result-info" id="resultDetails"></div>
+
+      <!-- กล่องแสดงผล QR Code -->
+      <div id="qrcode"></div>
+
+      <p style="font-size: 12px; color: #A73B24; margin-top: 8px; margin-bottom: 0; font-weight: 500;">
+        <i class="fa-solid fa-camera"></i> กรุณาแคปหน้าจอนี้ไว้ เพื่อใช้สแกนเข้างาน
+      </p>
+
+      <button class="btn-outline" onclick="resetPage()">
+        <i class="fa-solid fa-rotate-left"></i> ลงทะเบียนคนถัดไป / กลับหน้าแรก
+      </button>
+    </div>
+
+  </div>
+
+  <div class="footer">
+    © <span id="currentYear"></span> <b>โครงการฮ่วมฮัก ฮ่วมใจ ฮับขวัญน้องใหม่ สิงห์มอดินแดง</b><br>
+    <span style="color: #a0aec0; font-size: 11px;">Powered by Q-FNPHAT</span>
+  </div>
+
+  <script>
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbxSpKZtB5r9uogKDhAMWKPd4NFBl891jGjlt2ad53Mzl3ILHSQQ2UJL2byGWEt1l2Be6Q/exec";
+
+    let currentRole = "";
+
+    // ระบบจัดรูปแบบรหัสนักศึกษาให้อยู่ในฟอร์แมต 695555555-5 อัตโนมัติ
+    function autoFormatStdId(e) {
+      let value = e.target.value.replace(/[^0-9]/g, ''); 
+      if (value.length > 9) {
+        value = value.substring(0, 9) + '-' + value.substring(9, 10);
+      }
+      e.target.value = value;
+    }
+
+    document.getElementById('stdId').addEventListener('input', autoFormatStdId);
+    document.getElementById('genStdId').addEventListener('input', autoFormatStdId);
+
+    // เมื่อเลือกสถานะแล้วให้ เมนูสถานะหายไป แล้วแสดงฟอร์ม
+    function selectRole(role) {
+      currentRole = role;
+      
+      // ซ่อนส่วนเลือกสถานะ
+      document.getElementById('roleSelectionWrapper').style.display = 'none';
+      
+      // แสดงส่วนฟอร์ม
+      document.getElementById('formContainer').style.display = 'block';
+
+      const genEmailInput = document.getElementById('genEmail');
+
+      if(role === 'status_1') {
+        document.getElementById('paStudentForm').style.display = 'block';
+        document.getElementById('generalWalkinForm').style.display = 'none';
+      } else {
+        document.getElementById('paStudentForm').style.display = 'none';
+        document.getElementById('generalWalkinForm').style.display = 'block';
+
+        if(role === 'status_2') {
+          document.getElementById('formTitleHeader').innerHTML = '<i class="fa-solid fa-circle-info"></i> นักศึกษา ป.โท/ป.เอก (รปศ.) และ ป.ตรี สาขาอื่นๆ';
+          document.getElementById('divGenStdId').style.display = 'block';
+          document.getElementById('lblGenStdId').innerHTML = 'รหัสนักศึกษา <span style="color:red;">*</span>';
+          genEmailInput.placeholder = "xxx@kkumail.com";
+        } else if(role === 'status_3') {
+          document.getElementById('formTitleHeader').innerHTML = '<i class="fa-solid fa-circle-info"></i> ศิษย์เก่า มหาวิทยาลัยขอนแก่น';
+          document.getElementById('divGenStdId').style.display = 'none';
+          genEmailInput.placeholder = "xxx@kkumail.com";
+        } else if(role === 'status_4') {
+          document.getElementById('formTitleHeader').innerHTML = '<i class="fa-solid fa-circle-info"></i> อาจารย์ / บุคลากร มหาวิทยาลัยขอนแก่น';
+          document.getElementById('divGenStdId').style.display = 'none';
+          genEmailInput.placeholder = "xxx@kku.ac.th";
+        }
+      }
+    }
+
+    // ย้อนกลับไปหน้าเลือกสถานะ
+    function backToRoleSelection() {
+      document.getElementById('roleSelectionWrapper').style.display = 'block';
+      document.getElementById('formContainer').style.display = 'none';
+      document.getElementById('extraStudentFields').style.display = 'none';
+    }
+
+    // ตรวจสอบข้อมูลนักศึกษา PA
+    function checkStudent() {
+      const stdId = document.getElementById("stdId").value.trim();
+      if(stdId.length !== 11) {
+        Swal.fire({ icon: 'warning', title: 'แจ้งเตือน', text: 'กรุณากรอกรหัสนักศึกษาให้ถูกต้อง (รูปแบบ 695555555-5)', confirmButtonColor: '#A73B24' });
+        return;
+      }
+
+      Swal.fire({ title: 'กำลังค้นหา...', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); } });
+
+      fetch(GAS_URL, {
+        method: "POST",
+        body: JSON.stringify({ action: "check_student", stdId: stdId })
+      })
+      .then(res => res.json())
+      .then(data => {
+        Swal.close();
+        if(data.status === "found") {
+          document.getElementById('extraStudentFields').style.display = 'none';
+          showSuccessResult(stdId, data.name, "นักศึกษาระดับปริญญาตรี สาขาวิชารัฐประศาสนศาสตร์", data.email);
+        } else {
+          document.getElementById('extraStudentFields').style.display = 'block';
+        }
+      })
+      .catch(err => {
+        Swal.fire({ icon: 'error', title: 'ผิดพลาด', text: 'เชื่อมต่อเซิร์ฟเวอร์ไม่ได้', confirmButtonColor: '#A73B24' });
+      });
+    }
+
+    // บันทึกนักศึกษา PA ใหม่กรณีไม่อยู่ในฐานข้อมูลเดิม
+    function registerNewPaStudent() {
+      const stdId = document.getElementById("stdId").value.trim();
+      const name = document.getElementById("stdName").value.trim();
+      const email = document.getElementById("stdEmail").value.trim();
+      const year = document.getElementById("stdYear").value;
+
+      if(!name || !email) {
+        Swal.fire({ icon: 'warning', title: 'แจ้งเตือน', text: 'กรุณากรอกชื่อ-นามสกุล และอีเมลให้ครบถ้วน', confirmButtonColor: '#A73B24' });
+        return;
+      }
+
+      Swal.fire({ title: 'กำลังบันทึกข้อมูล...', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); } });
+
+      fetch(GAS_URL, {
+        method: "POST",
+        body: JSON.stringify({
+          action: "register_walkin",
+          stdId: stdId,
+          name: name,
+          email: email,
+          year: year + " (สาขารัฐประศาสนศาสตร์)",
+          role: "นักศึกษาระดับปริญญาตรี สาขาวิชารัฐประศาสนศาสตร์"
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        Swal.close();
+        if(data.status === "success") {
+          showSuccessResult(stdId, name, "นักศึกษาระดับปริญญาตรี สาขาวิชารัฐประศาสนศาสตร์ (" + year + ")", email);
+        } else {
+          Swal.fire({ icon: 'error', title: 'ผิดพลาด', text: data.message, confirmButtonColor: '#A73B24' });
+        }
+      })
+      .catch(err => {
+        Swal.fire({ icon: 'error', title: 'ผิดพลาด', text: 'บันทึกข้อมูลไม่สำเร็จ', confirmButtonColor: '#A73B24' });
+      });
+    }
+
+    // บันทึกกลุ่มสถานะที่ 2, 3 และ 4
+    function registerGeneralWalkin() {
+      const name = document.getElementById("genName").value.trim();
+      const email = document.getElementById("genEmail").value.trim();
+      const inputStdId = document.getElementById("genStdId").value.trim();
+
+      if(!name || !email) {
+        Swal.fire({ icon: 'warning', title: 'แจ้งเตือน', text: 'กรุณากรอกชื่อ-นามสกุล และอีเมลให้ครบถ้วน', confirmButtonColor: '#A73B24' });
+        return;
+      }
+
+      if(currentRole === "status_2" && inputStdId.length !== 11) {
+        Swal.fire({ icon: 'warning', title: 'แจ้งเตือน', text: 'กรุณากรอกรหัสนักศึกษาให้ถูกต้อง (รูปแบบ 695555555-5)', confirmButtonColor: '#A73B24' });
+        return;
+      }
+
+      let roleTitle = "";
+      if (currentRole === "status_2") {
+        roleTitle = "นักศึกษาระดับปริญญาโท เอก สาขาวิชารัฐประศาสนศาสตร์ และนักศึกษาระดับปริญญาตรี สาขาอื่นๆ";
+      } else if (currentRole === "status_3") {
+        roleTitle = "ศิษย์เก่า มหาวิทยาลัยขอนแก่น";
+      } else if (currentRole === "status_4") {
+        roleTitle = "อาจารย์ / บุคลากร มหาวิทยาลัยขอนแก่น";
+      }
+
+      const finalId = inputStdId ? inputStdId : ("PA" + Math.floor(100000 + Math.random() * 900000));
+
+      Swal.fire({ title: 'กำลังบันทึกข้อมูล...', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); } });
+
+      fetch(GAS_URL, {
+        method: "POST",
+        body: JSON.stringify({
+          action: "register_walkin",
+          stdId: finalId,
+          name: name,
+          email: email,
+          year: roleTitle,
+          role: roleTitle
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        Swal.close();
+        if(data.status === "success") {
+          showSuccessResult(finalId, name, roleTitle, email);
+        } else {
+          Swal.fire({ icon: 'error', title: 'ผิดพลาด', text: data.message, confirmButtonColor: '#A73B24' });
+        }
+      })
+      .catch(err => {
+        Swal.fire({ icon: 'error', title: 'ผิดพลาด', text: 'บันทึกข้อมูลไม่สำเร็จ', confirmButtonColor: '#A73B24' });
+      });
+    }
+
+    // แสดงหน้าจอผลการลงทะเบียนสำเร็จ + สร้างรูปภาพ QR Code
+    function showSuccessResult(code, name, roleInfo, email) {
+      document.getElementById('formContainer').style.display = 'none';
+      document.getElementById('result-section').style.display = 'block';
+      
+      var isPA = code.startsWith("PA");
+      var labelID = isPA ? "รหัสอ้างอิงระบบ:" : "รหัสนักศึกษา:";
+
+      document.getElementById('resultDetails').innerHTML = `
+        <b>ชื่อ-นามสกุล:</b> ${name}<br>
+        <b>อีเมล:</b> ${email}<br>
+        <b>${labelID}</b> <span style="color:#A73B24; font-weight:bold;">${code}</span><br>
+        <b>สถานะ:</b> ${roleInfo}
+      `;
+
+      // สร้าง QR Code แสดงผลกลางหน้าจอ
+      document.getElementById("qrcode").innerHTML = "";
+      new QRCode(document.getElementById("qrcode"), {
+        text: code,
+        width: 170,
+        height: 170,
+        colorDark : "#A73B24",
+        colorLight : "#ffffff",
+        correctLevel : QRCode.CorrectLevel.H
+      });
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // รีเซ็ตเพื่อลงทะเบียนคนถัดไป
+    function resetPage() {
+      document.getElementById('result-section').style.display = 'none';
+      document.getElementById('roleSelectionWrapper').style.display = 'block';
+      document.getElementById('formContainer').style.display = 'none';
+      
+      // ล้างค่าในช่องกรอกข้อมูล
+      document.getElementById('stdId').value = '';
+      document.getElementById('stdName').value = '';
+      document.getElementById('stdEmail').value = '';
+      document.getElementById('genStdId').value = '';
+      document.getElementById('genName').value = '';
+      document.getElementById('genEmail').value = '';
+      document.getElementById('extraStudentFields').style.display = 'none';
+      
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    document.getElementById("currentYear").innerText = new Date().getFullYear();
+  </script>
+</body>
+</html>
