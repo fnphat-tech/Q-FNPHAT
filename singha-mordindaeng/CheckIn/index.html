@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Q-FNPHAT | Quick Scan, Smart Queue</title>
+  
+  <!-- Fonts: Mitr -->
+  <link href="https://fonts.googleapis.com/css2?family=Mitr:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <!-- SweetAlert2 -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <!-- HTML5 QR Code Scanner -->
+  <script src="https://unpkg.com/html5-qrcode"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    * { box-sizing: border-box; font-family: 'Mitr', sans-serif; }
+    body { background-color: #f4f6f9; color: #333333; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+    
+    .container { width: 90%; max-width: 420px; background: #ffffff; padding: 35px 25px; text-align: center; border-radius: 16px; border-top: 6px solid #A73B24; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); margin-top: 4vh; margin-bottom: 20px; }
+
+    .logo-img { width: 80px; height: 80px; object-fit: cover; border-radius: 50%; margin-bottom: 15px; border: 2px solid #A73B24; padding: 2px; }
+    h1 { color: #A73B24; font-weight: 600; font-size: 24px; margin-top: 0; margin-bottom: 5px; letter-spacing: 0.5px; }
+    p.subtitle { color: #7f8c8d; font-size: 14px; margin-top: 0; margin-bottom: 25px; }
+
+    #login-section { display: block; }
+    
+    .input-wrapper { position: relative; margin-bottom: 18px; text-align: left; }
+    .input-wrapper i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #95a5a6; }
+    
+    input, select { width: 100%; padding: 14px 14px 14px 45px; border: 1px solid #e0e6ed; background-color: #fafbfc; border-radius: 10px; font-size: 15px; transition: all 0.3s ease; }
+    input:focus, select:focus { border-color: #A73B24; background-color: #ffffff; outline: none; box-shadow: 0 0 0 3px rgba(167, 59, 36, 0.12); }
+    
+    .session-wrapper { text-align: left; margin-bottom: 15px; }
+    .session-wrapper label { font-size: 13px; font-weight: 500; color: #A73B24; margin-bottom: 5px; display: block; }
+    .session-select { padding: 12px 14px 12px 40px; cursor: pointer; }
+
+    .btn-primary { width: 100%; background-color: #A73B24; color: #fff; border: none; padding: 14px; border-radius: 10px; font-size: 16px; font-weight: 500; cursor: pointer; transition: background-color 0.3s, transform 0.1s; margin-top: 10px; }
+    .btn-primary:hover { background-color: #8c2e1b; }
+    .btn-primary:active { transform: scale(0.98); }
+
+    .btn-info { width: 100%; background-color: #17a2b8; color: #fff; border: none; padding: 12px; border-radius: 10px; font-size: 15px; cursor: pointer; transition: 0.3s; margin-bottom: 15px; }
+    .btn-info:hover { background-color: #138496; }
+
+    #scanner-section { display: none; width: 100%; }
+    #reader { width: 100%; border: 2px solid #e0e6ed; border-radius: 12px; overflow: hidden; margin-bottom: 20px; background-color: #fafbfc; }
+    
+    .action-buttons { display: flex; gap: 12px; }
+    .btn-outline { flex: 1; background-color: #fff; color: #4a5568; border: 1px solid #cbd5e0; padding: 12px; border-radius: 10px; font-size: 14px; cursor: pointer; transition: 0.3s; }
+    .btn-outline:hover { background-color: #f7fafc; color: #2d3748; }
+    
+    .btn-danger { flex: 1; background-color: #fff; color: #dc3545; border: 1px solid #dc3545; padding: 12px; border-radius: 10px; font-size: 14px; cursor: pointer; transition: 0.3s; }
+    .btn-danger:hover { background-color: #fff0f1; }
+    
+    #loading { display: none; color: #A73B24; margin-top: 15px; font-size: 14px; }
+    
+    .footer { margin-top: auto; padding: 20px; font-size: 12px; color: #a0aec0; letter-spacing: 0.5px; }
+
+    /* Custom Scrollbar for SweetAlert List */
+    .swal-list-container::-webkit-scrollbar { width: 6px; }
+    .swal-list-container::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 4px; }
+    .swal-list-container::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 4px; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <!-- หน้าต่าง Login -->
+    <div id="login-section">
+      <img src="/Q-FNPHAT/logo.svg" alt="Logo" class="logo-img" onerror="this.style.display='none'">
+      
+      <h1>Q-FNPHAT</h1>
+      <p class="subtitle">Quick Scan, Smart Queue</p>
+
+      <!-- เพิ่ม form เพื่อรองรับการกด Enter บนคีย์บอร์ด -->
+      <form onsubmit="event.preventDefault(); login();">
+        <div class="input-wrapper">
+          <i class="fa-regular fa-envelope"></i>
+          <input type="email" id="email" placeholder="Staff Email" required>
+        </div>
+        
+        <div class="input-wrapper">
+          <i class="fa-regular fa-id-badge"></i>
+          <input type="text" id="stdId" placeholder="Staff ID (เช่น 693080561-7)" maxlength="11" required>
+        </div>
+
+        <button type="submit" class="btn-primary">เข้าสู่ระบบ (Staff Login)</button>
+      </form>
+
+      <div id="loading"><i class="fa-solid fa-spinner fa-spin"></i> กำลังตรวจสอบข้อมูล...</div>
+    </div>
+
+    <!-- หน้าต่าง Scanner -->
+    <div id="scanner-section">
+      <h1 style="font-size: 20px; margin-bottom: 15px;">สแกน QR Code เข้างาน</h1>
+      
+      <!-- ตัวเลือกรอบการลงทะเบียน -->
+      <div class="session-wrapper">
+        <label><i class="fa-regular fa-clock"></i> เลือกรูปแบบ/รอบการลงทะเบียน:</label>
+        <div class="input-wrapper" style="margin-bottom: 0;">
+          <i class="fa-solid fa-layer-group"></i>
+          <select id="sessionSelect" class="session-select">
+            <option value="ลงทะเบียน">ลงทะเบียน</option>
+            <option value="ลงทะเบียน รอบเช้า">ลงทะเบียน รอบเช้า</option>
+            <option value="ลงทะเบียน รอบบ่าย">ลงทะเบียน รอบบ่าย</option>
+            <option value="ลงทะเบียน รอบเย็น">ลงทะเบียน รอบเย็น</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="reader"></div>
+      
+      <!-- ปุ่มดูรายชื่อ -->
+      <button class="btn-info" onclick="showRegisteredList()">
+        <i class="fa-solid fa-users"></i> ดูรายชื่อผู้ลงทะเบียน
+      </button>
+
+      <div class="action-buttons">
+        <button class="btn-outline" onclick="reloadPage()">
+          <i class="fa-solid fa-rotate-right"></i> รีโหลด
+        </button>
+        <button class="btn-danger" onclick="logout()">
+          <i class="fa-solid fa-arrow-right-from-bracket"></i> ออกจากระบบ
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    © <span id="currentYear"></span> Powered by <strong>FNPHAT</strong>. All rights reserved.
+  </div>
+
+  <script>
+    // ----------------------------------------------------
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbxSpKZtB5r9uogKDhAMWKPd4NFBl891jGjlt2ad53Mzl3ILHSQQ2UJL2byGWEt1l2Be6Q/exec"; 
+    // ----------------------------------------------------
+
+    let html5QrcodeScanner = null;
+    let isProcessing = false;
+
+    // --- ส่วนจัดรูปแบบรหัสนักศึกษาอัตโนมัติ ---
+    document.getElementById('stdId').addEventListener('input', function (e) {
+      let value = e.target.value.replace(/[^0-9]/g, ''); 
+      if (value.length > 9) {
+        value = value.substring(0, 9) + '-' + value.substring(9, 10);
+      }
+      e.target.value = value;
+    });
+
+    window.onload = () => {
+      if (sessionStorage.getItem("isLoggedIn") === "true") {
+        showScanner();
+      }
+    };
+
+    function login() {
+      const email = document.getElementById("email").value.trim();
+      const stdId = document.getElementById("stdId").value.trim();
+      
+      if(!email || !stdId) {
+        Swal.fire({ icon: 'warning', title: 'แจ้งเตือน', text: 'กรุณากรอกข้อมูลให้ครบทุกช่อง', confirmButtonColor: '#A73B24' });
+        return;
+      }
+      if(stdId.length !== 11) {
+        Swal.fire({ icon: 'warning', title: 'แจ้งเตือน', text: 'รหัส Staff ID ไม่ถูกต้อง (ต้องมี 11 หลัก)', confirmButtonColor: '#A73B24' });
+        return;
+      }
+
+      document.getElementById("loading").style.display = "block";
+
+      fetch(GAS_URL, {
+        method: "POST",
+        body: JSON.stringify({ action: "login", email: email, stdId: stdId })
+      })
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById("loading").style.display = "none";
+        if(data.status === "success") {
+          sessionStorage.setItem("isLoggedIn", "true");
+          showScanner();
+        } else {
+          Swal.fire({ icon: 'error', title: 'เข้าสู่ระบบไม่สำเร็จ', text: data.message || "อีเมลหรือรหัสไม่ถูกต้อง", confirmButtonColor: '#A73B24' });
+        }
+      })
+      .catch(err => {
+        document.getElementById("loading").style.display = "none";
+        Swal.fire({ icon: 'error', title: 'เกิดข้อผิดพลาด', text: 'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้', confirmButtonColor: '#A73B24' });
+      });
+    }
+
+    function showScanner() {
+      document.getElementById("login-section").style.display = "none";
+      document.getElementById("scanner-section").style.display = "block";
+      
+      if(!html5QrcodeScanner) {
+        html5QrcodeScanner = new Html5QrcodeScanner("reader", { 
+          fps: 10, 
+          qrbox: { width: 250, height: 250 },
+          supportedScanTypes: [Html5QrcodeScanType.SCAN_TYPE_CAMERA] 
+        });
+        html5QrcodeScanner.render(onScanSuccess);
+      }
+    }
+
+    function onScanSuccess(decodedText) {
+      if (isProcessing) return;
+      isProcessing = true;
+      
+      try { html5QrcodeScanner.pause(true); } catch(e) {}
+
+      const currentSession = document.getElementById("sessionSelect").value;
+
+      Swal.fire({
+        title: 'กำลังตรวจสอบ...',
+        text: `ID: ${decodedText} (${currentSession})`,
+        allowOutsideClick: false,
+        didOpen: () => { Swal.showLoading(); }
+      });
+
+      fetch(GAS_URL, {
+        method: "POST",
+        body: JSON.stringify({ 
+          action: "scan", 
+          scanId: decodedText,
+          session: currentSession 
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        let displayName = data.nickname ? `${data.name} (${data.nickname})` : (data.name || decodedText);
+
+        if(data.status === "success") {
+          Swal.fire({ 
+            icon: 'success', 
+            title: 'ลงทะเบียนสำเร็จ!', 
+            html: `<b>${displayName}</b><br><span style="color:#7f8c8d; font-size:14px;">รอบ: ${currentSession}</span>`,
+            timer: 2200,
+            showConfirmButton: false
+          }).then(() => { resumeScanner(); });
+        } else if (data.status === "already_registered") {
+          Swal.fire({ 
+            icon: 'warning', 
+            title: 'ลงทะเบียนซ้ำ!', 
+            html: `<b>${displayName}</b><br>ได้ลงทะเบียนใน <b>${currentSession}</b> ไปแล้ว`,
+            confirmButtonColor: '#f39c12'
+          }).then(() => { resumeScanner(); });
+        } else {
+          Swal.fire({ 
+            icon: 'error', 
+            title: 'ผิดพลาด', 
+            text: data.message, 
+            confirmButtonColor: '#A73B24'
+          }).then(() => { resumeScanner(); });
+        }
+      })
+      .catch(err => {
+        Swal.fire({ icon: 'error', title: 'Network Error', text: 'กรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ต', confirmButtonColor: '#A73B24' })
+            .then(() => { resumeScanner(); });
+      });
+    }
+
+    // --- ฟังก์ชันสำหรับดึงและแสดงรายชื่อตามรอบ ---
+    function showRegisteredList() {
+      try { if (html5QrcodeScanner) html5QrcodeScanner.pause(true); } catch(e) {}
+
+      const currentSession = document.getElementById("sessionSelect").value;
+
+      Swal.fire({
+        title: `กำลังโหลดข้อมูล (${currentSession})...`,
+        allowOutsideClick: false,
+        didOpen: () => { Swal.showLoading(); }
+      });
+
+      fetch(GAS_URL, {
+        method: "POST",
+        body: JSON.stringify({ 
+          action: "get_registered_list",
+          session: currentSession 
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.status === "success") {
+          let htmlContent = `<div class="swal-list-container" style="text-align:left; max-height: 350px; overflow-y: auto; padding-right: 5px;">`;
+          
+          const listData = data.data || [];
+
+          if (data.total === 0 || listData.length === 0) {
+            htmlContent += `<p style="text-align:center; color: #7f8c8d; margin-top:20px;">ยังไม่มีผู้ลงทะเบียนใน${currentSession}</p>`;
+          } else {
+            htmlContent += `<div style="background:#fdf5f4; padding:10px; border-radius:8px; margin-bottom: 15px; text-align:center; font-weight:600; color:#A73B24; border: 1px solid #f8d7da;">ยอดรวม (${currentSession}): ${data.total} คน</div>`;
+            htmlContent += `<ul style="list-style: none; padding: 0; margin: 0;">`;
+            
+            listData.forEach((person, index) => {
+              let displayName = person.nickname ? `${person.name} (${person.nickname})` : person.name;
+              htmlContent += `
+                <li style="padding: 10px 0; border-bottom: 1px solid #e0e6ed;">
+                  <div style="color: #333; font-weight: 500; font-size: 14.5px;">${index + 1}. ${displayName}</div>
+                  <div style="font-size: 12px; color: #7f8c8d; margin-top:3px;"><i class="fa-regular fa-clock"></i> ${person.time}</div>
+                </li>`;
+            });
+            htmlContent += `</ul>`;
+          }
+          htmlContent += `</div>`;
+
+          Swal.fire({
+            title: `รายชื่อผู้ลงทะเบียน (${currentSession})`,
+            html: htmlContent,
+            confirmButtonText: 'ปิดหน้าต่าง',
+            confirmButtonColor: '#A73B24',
+            width: '90%'
+          }).then(() => {
+            try { if (html5QrcodeScanner) html5QrcodeScanner.resume(); } catch(e) {}
+          });
+        } else {
+          Swal.fire('ผิดพลาด', 'ไม่สามารถดึงข้อมูลได้', 'error').then(() => {
+            try { if (html5QrcodeScanner) html5QrcodeScanner.resume(); } catch(e) {}
+          });
+        }
+      })
+      .catch(err => {
+        Swal.fire('ผิดพลาด', 'เชื่อมต่อเซิร์ฟเวอร์ไม่ได้', 'error').then(() => {
+          try { if (html5QrcodeScanner) html5QrcodeScanner.resume(); } catch(e) {}
+        });
+      });
+    }
+
+    function resumeScanner() {
+      setTimeout(() => {
+        isProcessing = false;
+        try {
+          if(html5QrcodeScanner) html5QrcodeScanner.resume();
+        } catch(e) {
+          console.log("Scanner resume:", e);
+        }
+      }, 800);
+    }
+
+    function reloadPage() {
+      location.reload();
+    }
+
+    function logout() {
+      sessionStorage.removeItem("isLoggedIn");
+      if(html5QrcodeScanner) {
+        try { html5QrcodeScanner.clear(); } catch(e) {}
+        html5QrcodeScanner = null;
+      }
+      document.getElementById("scanner-section").style.display = "none";
+      document.getElementById("login-section").style.display = "block";
+      document.getElementById("email").value = "";
+      document.getElementById("stdId").value = "";
+    }
+
+    // เซ็ตปีปัจจุบันอัตโนมัติใน Footer
+    document.getElementById("currentYear").innerText = new Date().getFullYear();
+  </script>
+
+</body>
+</html>
